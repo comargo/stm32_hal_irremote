@@ -36,18 +36,19 @@ struct CM_HAL_IRREMOTE {
   void (*callback)(struct CM_HAL_IRREMOTE *irremote, void *userData);
   void *userData;
 
-	/* Private */
 	TIM_HandleTypeDef htim;
 	DMA_HandleTypeDef dma_width;
 	DMA_HandleTypeDef dma_pulse;
 
 
 	enum IRREMOTE_STATE rcvstate; // State Machine state
-	uint8_t rawlen; // counter of entries in rawbuf
 	uint16_t rawbuf[IRREMOTE_RAWBUF]; // raw data
 	uint16_t data_width[IRREMOTE_RAWBUF/2];
 	uint16_t data_pulse[IRREMOTE_RAWBUF/2];
-	bool overflow; // Raw buffer overflow occurred
+	uint8_t data_width_len;
+	uint8_t data_pulse_len;
+	uint8_t rawlen; // counter of entries in rawbuf
+	uint8_t overflow; // Raw buffer overflow occurred
 };
 
 enum decode_type_t
@@ -85,11 +86,15 @@ struct decode_results_t
 		int16_t overflow; // true if IR raw code too long
 };
 
-void CM_HAL_IRREMOTE_Init(struct CM_HAL_IRREMOTE *irremote);
+void CM_HAL_IRREMOTE_Init(struct CM_HAL_IRREMOTE *irremote, TIM_TypeDef* tim);
 
-void CM_HAL_IRREMOTE_Start(struct CM_HAL_IRREMOTE *irremote);
+void CM_HAL_IRREMOTE_Start_DMA(struct CM_HAL_IRREMOTE *irremote);
 
-void CM_HAL_IRREMOTE_Stop(struct CM_HAL_IRREMOTE *irremote);
+void CM_HAL_IRREMOTE_Start_IT(struct CM_HAL_IRREMOTE *irremote);
+
+void CM_HAL_IRREMOTE_Stop_DMA(struct CM_HAL_IRREMOTE *irremote);
+
+void CM_HAL_IRREMOTE_Stop_IT(struct CM_HAL_IRREMOTE *irremote);
 
 void CM_HAL_IRREMOTE_IRQHandler(struct CM_HAL_IRREMOTE* irremote, IRQn_Type irq);
 
