@@ -41,7 +41,7 @@ struct CM_HAL_IRREMOTE {
 	DMA_HandleTypeDef dma_pulse;
 
 
-	enum IRREMOTE_STATE rcvstate; // State Machine state
+	volatile enum IRREMOTE_STATE rcvstate; // State Machine state
 	uint16_t rawbuf[IRREMOTE_RAWBUF]; // raw data
 	uint16_t data_width[IRREMOTE_RAWBUF/2];
 	uint16_t data_pulse[IRREMOTE_RAWBUF/2];
