@@ -227,7 +227,7 @@ static void InitDMA(struct CM_HAL_IRREMOTE *irremote)
 
 }
 
-static inline bool IsIRRemoteDMA(struct CM_HAL_IRREMOTE *irremote)
+static inline uint8_t IsIRRemoteDMA(struct CM_HAL_IRREMOTE *irremote)
 {
 	return (irremote->htim.Instance->DIER & TIM_DMA_CC1) != 0
 			&& (irremote->htim.Instance->DIER & TIM_DMA_CC2) != 0;
@@ -411,13 +411,13 @@ void CM_HAL_IRREMOTE_IRQHandler(struct CM_HAL_IRREMOTE *irremote, IRQn_Type irq)
 	}
 }
 
-bool CM_HAL_IRREMOTE_Decode(struct CM_HAL_IRREMOTE *irremote, struct decode_results_t *results)
+uint8_t CM_HAL_IRREMOTE_Decode(struct CM_HAL_IRREMOTE *irremote, struct decode_results_t *results)
 {
 	if (irremote->rcvstate != IRREMOTE_DONE)
-		return false;
+		return 0;
 
 	if (irremote->data_width_len == 0 || irremote->data_pulse_len == 0)
-		return false;
+		return 0;
 
 	irremote->rawlen = 1;
 	irremote->rawbuf[0] = irremote->data_width[0];
@@ -435,73 +435,73 @@ bool CM_HAL_IRREMOTE_Decode(struct CM_HAL_IRREMOTE *irremote, struct decode_resu
 
 #if DECODE_NEC
 	if (decodeNEC(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_SONY
 	if(decodeSony(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_SANYO
 	if(decodeSanyo(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_MITSUBISHI
 	if(decodeMitsubishi(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_RC5
 	if (decodeRC5(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_RC6
 	if (decodeRC6(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_PANASONIC
 	if(decodePanasonic(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_LG
 	if(decodeLG(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_JVC
 	if(decodeJVC(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_SAMSUNG
 	if(decodeSAMSUNG(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_WHYNTER
 	if(decodeWhynter(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_AIWA_RC_T501
 	if(decodeAiwaRCT501(results))
-		return true;
+		return 1;
 #endif
 
 #if DECODE_DENON
 	if(decodeDenon(results))
-		return true;
+		return 1;
 #endif
 
 	if (decodeHash(results))
-		return true;
+		return 1;
 
-	return false;
+	return 0;
 }
 
 __attribute__((weak)) void assert_failed(uint8_t *file, uint32_t line)

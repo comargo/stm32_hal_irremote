@@ -46,7 +46,7 @@ uint8_t decodeHash(struct decode_results_t *results)
 	int32_t hash = FNV_BASIS_32;
 
 	// Require at least 6 samples to prevent triggering on noise
-	if(results->rawlen < 6) return false;
+	if(results->rawlen < 6) return 0;
 
 	for(int16_t i = 1; (i + 2) < results->rawlen; i++)
 	{
@@ -57,5 +57,5 @@ uint8_t decodeHash(struct decode_results_t *results)
 	results->value = hash;
 	results->bits = 32;
 	results->decode_type = UNKNOWN;
-	return true;
+	return 1;
 }

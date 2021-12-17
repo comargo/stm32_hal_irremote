@@ -47,7 +47,7 @@ uint8_t decodeNEC (struct decode_results_t *results)
 	int   offset = 1;  // Index in to results; Skip first entry!?
 
 	// Check header "mark"
-	if (!MATCH_MARK(results->rawbuf[offset], NEC_HDR_MARK))  return false ;
+	if (!MATCH_MARK(results->rawbuf[offset], NEC_HDR_MARK))  return 0 ;
 	offset++;
 
 	// Check for repeat
@@ -58,25 +58,25 @@ uint8_t decodeNEC (struct decode_results_t *results)
 		results->bits        = 0;
 		results->value       = IR_REPEAT;
 		results->decode_type = NEC;
-		return true;
+		return 1;
 	}
 
 	// Check we have enough data
-	if (results->rawlen < (2 * NEC_BITS) + 4)  return false ;
+	if (results->rawlen < (2 * NEC_BITS) + 4)  return 0 ;
 
 	// Check header "space"
-	if (!MATCH_SPACE(results->rawbuf[offset], NEC_HDR_SPACE))  return false ;
+	if (!MATCH_SPACE(results->rawbuf[offset], NEC_HDR_SPACE))  return 0 ;
 	offset++;
 
 	// Build the data
 	for (int i = 0;  i < NEC_BITS;  i++) {
 		// Check data "mark"
-		if (!MATCH_MARK(results->rawbuf[offset], NEC_BIT_MARK))  return false ;
+		if (!MATCH_MARK(results->rawbuf[offset], NEC_BIT_MARK))  return 0 ;
 		offset++;
         // Suppend this bit
 		if      (MATCH_SPACE(results->rawbuf[offset], NEC_ONE_SPACE ))  data = (data << 1) | 1 ;
 		else if (MATCH_SPACE(results->rawbuf[offset], NEC_ZERO_SPACE))  data = (data << 1) | 0 ;
-		else                                                            return false ;
+		else                                                            return 0 ;
 		offset++;
 	}
 
@@ -87,6 +87,6 @@ uint8_t decodeNEC (struct decode_results_t *results)
 	results->address = inverseBits((data&0xFF000000)>>24);
 	results->command = inverseBits((data&0x0000FF00)>>8);
 
-	return true;
+	return 1;
 }
 #endif

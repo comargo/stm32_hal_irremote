@@ -8,8 +8,6 @@
 #ifndef STM32_HAL_IRREMOTE_H_
 #define STM32_HAL_IRREMOTE_H_
 
-#include <stdbool.h>
-
 #define HAL_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
@@ -98,6 +96,6 @@ void CM_HAL_IRREMOTE_Stop_IT(struct CM_HAL_IRREMOTE *irremote);
 
 void CM_HAL_IRREMOTE_IRQHandler(struct CM_HAL_IRREMOTE* irremote, IRQn_Type irq);
 
-bool CM_HAL_IRREMOTE_Decode(struct CM_HAL_IRREMOTE *irremote, struct decode_results_t *results);
+uint8_t CM_HAL_IRREMOTE_Decode(struct CM_HAL_IRREMOTE *irremote, struct decode_results_t *results);
 
 #endif /* STM32_HAL_IRREMOTE_H_ */

@@ -66,12 +66,12 @@ uint8_t decodeRC5 (struct decode_results_t *results)
 	int   used   = 0;
 	int   offset = 1;  // Skip gap space
 
-	if (results->rawlen < MIN_RC5_SAMPLES + 2)  return false ;
+	if (results->rawlen < MIN_RC5_SAMPLES + 2)  return 0 ;
 
 	// Get start bits
-	if (getRClevel(results, &offset, &used, RC5_T1) != IR_DATA_MARK)   return false ;
-	if (getRClevel(results, &offset, &used, RC5_T1) != IR_DATA_SPACE)  return false ;
-	if (getRClevel(results, &offset, &used, RC5_T1) != IR_DATA_MARK)   return false ;
+	if (getRClevel(results, &offset, &used, RC5_T1) != IR_DATA_MARK)   return 0 ;
+	if (getRClevel(results, &offset, &used, RC5_T1) != IR_DATA_SPACE)  return 0 ;
+	if (getRClevel(results, &offset, &used, RC5_T1) != IR_DATA_MARK)   return 0 ;
 
 	for (nbits = 0;  offset < results->rawlen;  nbits++) {
 		int  levelA = getRClevel(results, &offset, &used, RC5_T1);
@@ -79,14 +79,14 @@ uint8_t decodeRC5 (struct decode_results_t *results)
 
 		if      ((levelA == IR_DATA_SPACE) && (levelB == IR_DATA_MARK ))  data = (data << 1) | 1 ;
 		else if ((levelA == IR_DATA_MARK ) && (levelB == IR_DATA_SPACE))  data = (data << 1) | 0 ;
-		else                                              return false ;
+		else                                              return 0 ;
 	}
 
 	// Success
 	results->bits        = nbits;
 	results->value       = data;
 	results->decode_type = RC5;
-	return true;
+	return 1;
 }
 #endif
 
@@ -114,15 +114,15 @@ uint8_t decodeRC6 (struct decode_results_t *results)
 	int   used   = 0;
 	int   offset = 1;  // Skip first space
 
-	if (results->rawlen < MIN_RC6_SAMPLES)  return false ;
+	if (results->rawlen < MIN_RC6_SAMPLES)  return 0 ;
 
 	// Initial mark
-	if (!MATCH_MARK(results->rawbuf[offset++],  RC6_HDR_MARK))   return false ;
-	if (!MATCH_SPACE(results->rawbuf[offset++], RC6_HDR_SPACE))  return false ;
+	if (!MATCH_MARK(results->rawbuf[offset++],  RC6_HDR_MARK))   return 0 ;
+	if (!MATCH_SPACE(results->rawbuf[offset++], RC6_HDR_SPACE))  return 0 ;
 
 	// Get start bit (1)
-	if (getRClevel(results, &offset, &used, RC6_T1) != IR_DATA_MARK)   return false ;
-	if (getRClevel(results, &offset, &used, RC6_T1) != IR_DATA_SPACE)  return false ;
+	if (getRClevel(results, &offset, &used, RC6_T1) != IR_DATA_MARK)   return 0 ;
+	if (getRClevel(results, &offset, &used, RC6_T1) != IR_DATA_SPACE)  return 0 ;
 
 	for (nbits = 0;  offset < results->rawlen;  nbits++) {
 		int  levelA, levelB;  // Next two levels
@@ -130,25 +130,25 @@ uint8_t decodeRC6 (struct decode_results_t *results)
 		levelA = getRClevel(results, &offset, &used, RC6_T1);
 		if (nbits == 3) {
 			// T bit is double wide; make sure second half matches
-			if (levelA != getRClevel(results, &offset, &used, RC6_T1)) return false;
+			if (levelA != getRClevel(results, &offset, &used, RC6_T1)) return 0;
 		}
 
 		levelB = getRClevel(results, &offset, &used, RC6_T1);
 		if (nbits == 3) {
 			// T bit is double wide; make sure second half matches
-			if (levelB != getRClevel(results, &offset, &used, RC6_T1)) return false;
+			if (levelB != getRClevel(results, &offset, &used, RC6_T1)) return 0;
 		}
 
 		if      ((levelA == IR_DATA_MARK ) && (levelB == IR_DATA_SPACE))  data = (data << 1) | 1 ;  // inverted compared to RC5
 		else if ((levelA == IR_DATA_SPACE) && (levelB == IR_DATA_MARK ))  data = (data << 1) | 0 ;  // ...
-		else                                              return false ;            // Error
+		else                                              return 0 ;            // Error
 	}
 
 	// Success
 	results->bits        = nbits;
 	results->value       = data;
 	results->decode_type = RC6;
-	return true;
+	return 1;
 }
 #endif
 
