@@ -13,11 +13,8 @@
 // Due to sensor lag, when received, Marks  tend to be 100us too long and Spaces tend to be 100us too short
 #define IR_MARK_EXCESS 0
 
-
 #define _IR_GAP            15000
 #define IR_GAP_TICKS       (_IR_GAP/IR_USECPERTICK)
-
-
 
 #define DECODE_RC5           1 // чтоб отключить декодирование протокола нужно указать 0
 #define DECODE_RC6           1
